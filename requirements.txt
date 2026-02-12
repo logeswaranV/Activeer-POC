@@ -1,1 +1,2 @@
 aspose-slides
+matplotlib

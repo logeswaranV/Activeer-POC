@@ -33,13 +33,13 @@
                         "bucket_label": "Years",
                         "count_label": "Physicians",
                         "aggregations": {
-                            ">25": 20,
-                            "21 to 25": 0,
-                            "16 to 20": 30,
-                            "11 to 15": 30,
-                            "7 to 10": 10,
+                            "0 to 3": 10,
                             "4 to 6": 0,
-                            "0 to 3": 10
+                            "7 to 10": 10,
+                            "11 to 15": 30,
+                            "16 to 20": 30,
+                            "21 to 25": 0,
+                            ">25": 20
                         }
                     },
                     {
@@ -49,12 +49,12 @@
                         "bucket_label": "Physicians",
                         "count_label": "Patients",
                         "aggregations": {
-                            ">50": 20,
-                            "31 to 50": 10,
-                            "21 to 30": 30,
-                            "11 to 20": 20,
+                            "1 to 5": 0,
                             "6 to 10": 40,
-                            "1 to 5": 0
+                            "11 to 20": 50,
+                            "21 to 30": 30,
+                            "31 to 50": 10,
+                            ">50": 20
                         }
                     },
                     {
@@ -62,8 +62,8 @@
                         "chartType": "donut_chart",
                         "name": "How comfortable are you managing ocular toxicities?",
                         "aggregations": {
-                            "Treat the patient": 20,
-                            "Refer to an optometrist": 40,
+                            "Treat the patient": 40,
+                            "Refer to an optometrist": 20,
                             "Refer to ophthalmologist": 40
                         }
                     }
