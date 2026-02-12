@@ -1,0 +1,74 @@
+{
+    "deck": {
+        "metadata": {
+            "title": "ADC Clinical Insights Deck",
+            "version": "1.0",
+            "theme_key": "clinical_modern"
+        },
+        "slides": [
+            {
+                "order": 2,
+                "slide_type": "content",
+                "title": "Attendee Demographics",
+                "body": [
+                    {
+                        "component": "table",
+                        "content": ""
+                    },
+                    {
+                        "component": "text",
+                        "content": " - The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored /n- Attendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea"
+                    }
+                ]
+            },
+            {
+                "order": 1,
+                "slide_type": "content",
+                "title": "Attendee Demographics",
+                "body": [
+                    {
+                        "component": "chart",
+                        "chartType": "horizontal_bar_chart",
+                        "name": "Years Post-Residency Treating Patients With BC",
+                        "bucket_label": "Years",
+                        "count_label": "Physicians",
+                        "aggregations": {
+                            ">25": 20,
+                            "21 to 25": 0,
+                            "16 to 20": 30,
+                            "11 to 15": 30,
+                            "7 to 10": 10,
+                            "4 to 6": 0,
+                            "0 to 3": 10
+                        }
+                    },
+                    {
+                        "component": "chart",
+                        "chartType": "horizontal_bar_chart",
+                        "name": "Patient Location:",
+                        "bucket_label": "Physicians",
+                        "count_label": "Patients",
+                        "aggregations": {
+                            ">50": 20,
+                            "31 to 50": 10,
+                            "21 to 30": 30,
+                            "11 to 20": 20,
+                            "6 to 10": 40,
+                            "1 to 5": 0
+                        }
+                    },
+                    {
+                        "component": "chart",
+                        "chartType": "donut_chart",
+                        "name": "How comfortable are you managing ocular toxicities?",
+                        "aggregations": {
+                            "Treat the patient": 20,
+                            "Refer to an optometrist": 40,
+                            "Refer to ophthalmologist": 40
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
