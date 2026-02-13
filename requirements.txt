@@ -1,2 +1,5 @@
 aspose-slides
 matplotlib
+plotly
+pandas
+kaleido

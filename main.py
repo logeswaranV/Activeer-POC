@@ -3,8 +3,16 @@ import math
 from pathlib import Path
 
 import aspose.slides as slides
-from Components.utils import add_title, _remove_default_placeholders
+from aspose.pydrawing import Color
+from aspose.slides import FillType
+from Components.utils import (
+    add_title,
+    _remove_default_placeholders,
+)
 from Components.chart_tools import add_graph
+from Components.map_tools import render_map_image
+from Components.text_tools import render_text_content, render_html_into_shape
+from Components.table_tools import render_table
 
 CARD_PADDING = 12
 INCH_TO_PT = 72
@@ -75,7 +83,7 @@ class SlideObject:
             self.slide_height
             - self.chart_start_y
             - self.row_gap * (rows - 1)
-            - CARD_PADDING * 2
+            - CARD_PADDING * 1  # reduced bottom margin
         )
         per_row = available_height / rows if available_height > 0 else 120
         per_row = min(per_row, CARD_MAX_HEIGHT)
@@ -98,30 +106,181 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
         slide = presentation.slides.add_empty_slide(layout_slide)
         _remove_default_placeholders(slide)
         components = slide_payload.get("body") or []
-        chart_components = [
-            component for component in components if component.get("component") == "chart"
-        ]
+        chart_only = _all_charts(components)
 
-        slide_object = SlideObject(
-            slide,
-            slide_width,
-            slide_height,
-            chart_columns=3,
-            column_gap=35,
-            row_gap=35,
-            total_charts=len(chart_components),
-        )
-
-        slide_title = slide_payload.get("title", "")
-        if slide_title:
-            add_title(slide_object, slide_title)
-
-        for component in chart_components:
-            add_graph(
-                slide_object,
-                component,
-                component.get("name", slide_title or "Chart"),
+        if chart_only:
+            column_count = max(1, len(components))
+            slide_object = SlideObject(
+                slide,
+                slide_width,
+                slide_height,
+                chart_columns=column_count,
+                column_gap=35,
+                row_gap=35,
+                total_charts=max(1, len(components)),
             )
+            slide_title = slide_payload.get("title", "")
+            if slide_title:
+                add_title(slide_object, slide_title)
+            _add_layout_guides(slide_object, column_count)
+            for component in components:
+                add_graph(
+                    slide_object,
+                    component,
+                    component.get("name", slide_title or "Chart"),
+                )
+        else:
+            _render_manual_layout(presentation, slide, components, slide_width, slide_height, slide_payload.get("title", ""))
+
+
+def _add_layout_guides(slide_object: SlideObject, columns: int) -> None:
+    """Draw plain background guides that divide the available width into columns."""
+
+    slide = slide_object.aspose_object
+    chart_height = slide_object.get_chart_height()
+    total_gap = (columns - 1) * slide_object.column_gap
+    col_width = (
+        (slide_object.slide_width - slide_object.left_margin * 2 - total_gap)
+        / max(1, columns)
+    )
+
+    y = slide_object.chart_start_y
+    for idx in range(columns):
+        x = slide_object.left_margin + idx * (col_width + slide_object.column_gap)
+        guide = slide.shapes.add_auto_shape(
+            slides.ShapeType.RECTANGLE,
+            x,
+            y,
+            col_width,
+            chart_height,
+        )
+        guide.fill_format.fill_type = FillType.NO_FILL
+        guide.line_format.fill_format.fill_type = FillType.NO_FILL
+
+
+def _all_charts(components: list) -> bool:
+    if not components:
+        return False
+    return all(isinstance(c, dict) and c.get("component") == "chart" for c in components)
+
+
+def _render_manual_layout(
+    presentation: slides.Presentation,
+    slide: slides.ISlide,
+    components: list,
+    slide_width: float,
+    slide_height: float,
+    title: str,
+) -> None:
+    slide_object = SlideObject(
+        slide,
+        slide_width,
+        slide_height,
+        chart_columns=len(components),
+        column_gap=35,
+        row_gap=35,
+        total_charts=len(components),
+    )
+    if title:
+        add_title(slide_object, title)
+
+    chart_height = slide_object.get_chart_height()
+    total_gap = slide_object.column_gap * (len(components) - 1)
+    col_width = (
+        slide_object.slide_width - slide_object.left_margin * 2 - total_gap
+    ) / max(1, len(components))
+    base_y = slide_object.chart_start_y
+
+    for idx, component in enumerate(components):
+        x = slide_object.left_margin + idx * (col_width + slide_object.column_gap)
+        _render_component_in_slot(slide_object, component, x, base_y, col_width, chart_height)
+
+    slide_object.last_bottom_y = base_y + chart_height
+
+
+def _render_component_in_slot(slide_object: SlideObject, component, x: float, y: float, width: float, height: float) -> None:
+    if isinstance(component, list):
+        items = [c for c in component if c]
+        if not items:
+            return
+        gap = 12
+        available_height = height - gap * (len(items) - 1)
+        if len(items) == 2:
+            heights = [available_height * 0.6, available_height * 0.4]
+        else:
+            per = available_height / len(items)
+            heights = [per] * len(items)
+
+        current_y = y
+        for item, h in zip(items, heights):
+            _render_component_in_slot(slide_object, item, x, current_y, width, h)
+            current_y += h + gap
+        return
+
+    if not isinstance(component, dict):
+        component = {"component": "text", "content": str(component)}
+
+    comp_type = component.get("component")
+    if comp_type == "chart":
+        # Fallback to chart renderer using current slot; add_graph uses internal positioning, so temporarily override chart width/position.
+        original_left = slide_object.left_margin
+        original_chart_width = slide_object.chart_width
+        original_chart_start_y = slide_object.chart_start_y
+        slide_object.left_margin = x
+        slide_object.chart_width = width
+        slide_object.chart_start_y = y
+        slide_object.current_column = 0
+        slide_object.current_row = 0
+        add_graph(slide_object, component, component.get("name", "Chart"))
+        slide_object.left_margin = original_left
+        slide_object.chart_width = original_chart_width
+        slide_object.chart_start_y = original_chart_start_y
+    elif comp_type == "map":
+        map_bytes = render_map_image(component.get("content", []) or [], width=int(width), height=int(height))
+        image = slide_object.aspose_object.presentation.images.add_image(map_bytes)
+        frame = slide_object.aspose_object.shapes.add_picture_frame(
+            slides.ShapeType.RECTANGLE,
+            x,
+            y,
+            width,
+            height,
+            image,
+        )
+        frame.line_format.fill_format.fill_type = FillType.NO_FILL
+    elif comp_type == "table":
+        render_table(slide_object, component, x, y, width, height)
+    else:
+        shape = slide_object.aspose_object.shapes.add_auto_shape(
+            slides.ShapeType.RECTANGLE,
+            x,
+            y,
+            width,
+            height,
+        )
+        shape.fill_format.fill_type = FillType.NO_FILL
+        shape.line_format.fill_format.fill_type = FillType.NO_FILL
+        render_html_into_shape(shape, component.get("content", ""))
+def _render_map(slide_object: SlideObject, component: dict) -> None:
+    width = slide_object.chart_width
+    height = slide_object.get_chart_height()
+    x, y = slide_object.get_next_chart_position(height)
+
+    highlight_states = component.get("content", []) or []
+    map_bytes = render_map_image(
+        highlight_states,
+        width=int(width),
+        height=int(height),
+    )
+    image = slide_object.aspose_object.presentation.images.add_image(map_bytes)
+    frame = slide_object.aspose_object.shapes.add_picture_frame(
+        slides.ShapeType.RECTANGLE,
+        x,
+        y,
+        width,
+        height,
+        image,
+    )
+    frame.line_format.fill_format.fill_type = FillType.NO_FILL
 
 
 # Instantiate a Presentation object that represents a presentation file

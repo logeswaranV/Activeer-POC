@@ -58,7 +58,8 @@ def add_title(slide_object: "SlideObject", text: str) -> None:
     title_bottom_y = title_shape.y + title_shape.height
     slide_object.last_bottom_y = max(slide_object.last_bottom_y, title_bottom_y)
     slide_object.chart_start_y = slide_object.last_bottom_y + 20
-    
+
+
 def _remove_default_placeholders(slide: slides.ISlide) -> None:  # pyright: ignore[reportAttributeAccessIssue]
     default_types = {
         slides.PlaceholderType.BODY,

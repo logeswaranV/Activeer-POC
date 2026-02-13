@@ -12,18 +12,16 @@ if TYPE_CHECKING:
 
 CARD_PADDING = 12
 INCH_TO_PT = 72
-
 DESIRED_CHART_WIDTH_IN = 3.3
 DESIRED_CHART_HEIGHT_IN = 4.0
-
 DONUT_COLORS = ["#27C1B5", "#10205E", "#F15A24"]
 BAR_CHART_COLOR = "#10205E"
-
 WIDTH_SCALE = 1.3
 HEIGHT_SCALE = 0.88
 DONUT_SCALE = 1.55
 DONUT_WIDTH_SCALE = 1.3
 DONUT_HEIGHT_SCALE = 1.35
+
 def _apply_card_shadow(card: slides.IShape) -> None:  # pyright: ignore[reportAttributeAccessIssue]
     effect = card.effect_format
     effect.enable_outer_shadow_effect()

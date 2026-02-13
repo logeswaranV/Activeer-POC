@@ -7,22 +7,35 @@
         },
         "slides": [
             {
-                "order": 2,
-                "slide_type": "content",
-                "title": "Attendee Demographics",
+                "slide_type": "meeting_info",
+                "title": "MEETING INFORMARION",
                 "body": [
                     {
-                        "component": "table",
-                        "content": ""
-                    },
-                    {
                         "component": "text",
-                        "content": " - The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored /n- Attendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea"
-                    }
+                        "content": "<ul>\n<li><strong>Event:</strong> Activeer\u00ae Nano Program: ADCs in the Treatment of HR+ mBC</li>\n<li><strong>Location:</strong> Virtual - Central</li>\n<li><strong>Date | Time:</strong> February 4 | 6:30 PM \u2013 8:30 PM CT</li>\n<li><strong>Moderator:</strong> Ruta Rao, MD</li>\n<li><strong>Attendees:</strong> 10 oncologists</li>\n</ul>"
+                    },
+                    [
+                        {
+                            "component": "table",
+                            "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocate Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |"
+                        },
+                        {
+                            "component": "map",
+                            "content": [
+                                "TX",
+                                "WI",
+                                "IL",
+                                "MO",
+                                "MI",
+                                "IN",
+                                "AR",
+                                "ND"
+                            ]
+                        }
+                    ]
                 ]
             },
             {
-                "order": 1,
                 "slide_type": "content",
                 "title": "Attendee Demographics",
                 "body": [
@@ -60,11 +73,11 @@
                     {
                         "component": "chart",
                         "chartType": "donut_chart",
-                        "name": "How comfortable are you managing ocular toxicities?",
+                        "name": "Which 1L treatment would you now recommend for this patient with EGFR exon 19 del mNSCLC?",
                         "aggregations": {
-                            "Treat the patient": 40,
-                            "Refer to an optometrist": 20,
-                            "Refer to ophthalmologist": 40
+                            "Osimertinib + chemotherapy": 44.4,
+                            "Amivantamab SQ + lazertinib": 33.3,
+                            "Osimertinib monotherapy": 22.2
                         }
                     }
                 ]
