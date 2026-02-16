@@ -16,14 +16,14 @@ def render_html_into_shape(shape: slides.IShape, html: str) -> None:  # pyright:
     tf.paragraphs.clear()
     tf.paragraphs.add_from_html(html)
 
-    # normalize font styling
-    for para in tf.paragraphs:
-        para.paragraph_format.alignment = slides.TextAlignment.LEFT
-        for portion in para.portions:
-            portion.portion_format.font_height = portion.portion_format.font_height or 16
-            portion.portion_format.font_bold = portion.portion_format.font_bold
-            portion.portion_format.fill_format.fill_type = FillType.SOLID
-            portion.portion_format.fill_format.solid_fill_color.color = Color.from_argb(255, 45, 45, 45)
+    # # normalize font styling
+    # for para in tf.paragraphs:
+    #     para.paragraph_format.alignment = slides.TextAlignment.LEFT
+    #     for portion in para.portions:
+    #         portion.portion_format.font_height = portion.portion_format.font_height or 16
+    #         portion.portion_format.font_bold = portion.portion_format.font_bold
+    #         portion.portion_format.fill_format.fill_type = FillType.SOLID
+    #         portion.portion_format.fill_format.solid_fill_color.color = Color.from_argb(255, 45, 45, 45)
 
 
 def render_meeting_info_markdown(shape: slides.IShape, markdown: str) -> None:  # pyright: ignore[reportAttributeAccessIssue]

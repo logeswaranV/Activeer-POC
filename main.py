@@ -151,7 +151,15 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
                     component.get("name", slide_title or "Chart"),
                 )
         else:
-            _render_manual_layout(presentation, slide, components, slide_width, slide_height, slide_payload.get("title", ""))
+            _render_manual_layout(
+                presentation,
+                slide,
+                components,
+                slide_width,
+                slide_height,
+                slide_payload.get("title", ""),
+                slide_payload.get("column_widths"),
+            )
 
 
 def _add_layout_guides(slide_object: SlideObject, columns: int) -> None:
@@ -192,6 +200,7 @@ def _render_manual_layout(
     slide_width: float,
     slide_height: float,
     title: str,
+    column_widths: list | None = None,
 ) -> None:
     slide_object = SlideObject(
         slide,
@@ -208,13 +217,28 @@ def _render_manual_layout(
 
     chart_height = slide_object.get_chart_height()
     total_gap = slide_object.column_gap * (len(components) - 1)
-    col_width = (
-        slide_object.slide_width - slide_object.left_margin * 2 - total_gap
-    ) / max(1, len(components))
+    # Equal split unless ratios are provided via column_widths.
+    if isinstance(column_widths, list) and column_widths and all(isinstance(v, (int, float)) and v > 0 for v in column_widths):
+        ratios = column_widths[: len(components)]
+        if len(ratios) < len(components):
+            ratios += [1.0] * (len(components) - len(ratios))
+        total = sum(ratios) or len(components)
+        widths = [
+            (slide_object.slide_width - slide_object.left_margin * 2 - total_gap)
+            * r
+            / total
+            for r in ratios
+        ]
+    else:
+        widths = [
+            (slide_object.slide_width - slide_object.left_margin * 2 - total_gap)
+            / max(1, len(components))
+        ] * len(components)
     base_y = slide_object.chart_start_y
 
     for idx, component in enumerate(components):
-        x = slide_object.left_margin + idx * (col_width + slide_object.column_gap)
+        col_width = widths[idx]
+        x = slide_object.left_margin + sum(widths[:idx]) + slide_object.column_gap * idx
         _render_component_in_slot(slide_object, component, x, base_y, col_width, chart_height)
 
     slide_object.last_bottom_y = base_y + chart_height

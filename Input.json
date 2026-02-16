@@ -8,7 +8,7 @@
         "slides": [
             {
                 "slide_type": "meeting_info",
-                "title": "MEETING INFORMARION",
+                "title": "MEETING INFORMATION",
                 "body": [
                     {
                         "component": "meeting_info_text",
@@ -17,7 +17,13 @@
                     [
                         {
                             "component": "meeting_info_table",
-                            "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocate Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |"
+                            "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocate Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |",
+                            "styles": {
+                                "ratio": [
+                                    0.7,
+                                    0.3
+                                ]
+                            }
                         },
                         {
                             "component": "map",
@@ -92,7 +98,33 @@
                 "body": [
                     {
                         "component": "table",
-                        "content": "<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse: collapse; width: 100%;\">\n  <thead>\n    <tr>\n      <th>ADC</th>\n      <th>Toxicities considered to be more of a concern compared to other ADCs used for mBC</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td><strong>T-DXd</strong></td>\n      <td>\n        <strong>ILD:</strong> may avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions<br>\n        <strong>Nausea/vomiting:</strong> managed with antiemetic prophylaxis<br>\n        <strong>Asthenia</strong>\n      </td>\n    </tr>\n    <tr>\n      <td><strong>Dato-DXd</strong></td>\n      <td>\n        <strong>Ocular toxicities</strong> (see next slide for more information on management)<br>\n        <strong>Mucositis/stomatitis:</strong> Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation\n      </td>\n    </tr>\n    <tr>\n      <td><strong>SG</strong></td>\n      <td>\n        <strong>Asthenia:</strong> managed with dose reductions<br>\n        <strong>Cytopenias, including neutropenia:</strong> managed with growth factors or dose reductions<br>\n        <strong>Diarrhea:</strong> managed with antidiarrheal regimens or dose reductions<br>\n        <strong>Alopecia:</strong> managed with dose reductions<br>\n        <strong>Weight loss</strong>\n      </td>\n    </tr>\n  </tbody>\n</table>"
+                        "content": "|  | Toxicities considered to be more of a concern compared to other ADCs used for mBC |\n|------|--------------------------------------------------------------------------------------------------------------------------------|\n| **T-DXd** | **ILD:** may avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions<br>**Nausea/vomiting:** managed with antiemetic prophylaxis<br>**Asthenia** |\n| **Dato-DXd** | **Ocular toxicities** (see next slide for more information on management)<br>**Mucositis/stomatitis:** Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation |\n| **SG** | **Asthenia:** managed with dose reductions<br>**Cytopenias, including neutropenia:** managed with growth factors or dose reductions<br>**Diarrhea:** managed with antidiarrheal regimens or dose reductions<br>**Alopecia:** managed with dose reductions<br>**Weight loss** |",
+                        "styles": {
+                            "ratio": [
+                                0.15,
+                                0.85
+                            ],
+                            "font_size": 16,
+                            "header_bg": "#ffffff",
+                            "border_color": "#000000",
+                            "header_text": "000000",
+                            "cell_bg": [
+                                "#1A2B5E",
+                                "#ffffff",
+                                "#F05A28",
+                                "#ffffff",
+                                "#2BB8B5",
+                                "#ffffff"
+                            ],
+                            "cell_text_color": [
+                                "#ffffff",
+                                "#000000",
+                                "#ffffff",
+                                "#000000",
+                                "#ffffff",
+                                "#000000"
+                            ]
+                        }
                     },
                     {
                         "component": "list",

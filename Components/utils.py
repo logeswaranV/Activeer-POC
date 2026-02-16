@@ -52,7 +52,7 @@ def add_title(slide_object: "SlideObject", text: str) -> None:
         portion.portion_format.font_height = 28
         portion.portion_format.font_bold = NullableBool.TRUE
         portion.portion_format.fill_format.fill_type = FillType.SOLID
-        portion.portion_format.fill_format.solid_fill_color.color = Color.navy
+        portion.portion_format.fill_format.solid_fill_color.color = Color.from_argb(255, 33, 45, 106)
     title_shape.line_format.fill_format.fill_type = FillType.NO_FILL
     _emphasize_title_text(title_frame)
 
@@ -90,7 +90,7 @@ def add_title_only(slide_object: "SlideObject", text: str) -> None:
         pf.font_height = 40
         pf.font_bold = NullableBool.TRUE
         pf.fill_format.fill_type = FillType.SOLID
-        pf.fill_format.solid_fill_color.color = Color.navy
+        pf.fill_format.solid_fill_color.color = Color.from_argb(255, 33, 45, 106)
 
     slide_object.last_bottom_y = y + height
     slide_object.chart_start_y = slide_object.last_bottom_y + 20
