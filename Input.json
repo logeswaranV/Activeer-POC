@@ -11,12 +11,12 @@
                 "title": "MEETING INFORMARION",
                 "body": [
                     {
-                        "component": "text",
-                        "content": "<ul>\n<li><strong>Event:</strong> Activeer\u00ae Nano Program: ADCs in the Treatment of HR+ mBC</li>\n<li><strong>Location:</strong> Virtual - Central</li>\n<li><strong>Date | Time:</strong> February 4 | 6:30 PM \u2013 8:30 PM CT</li>\n<li><strong>Moderator:</strong> Ruta Rao, MD</li>\n<li><strong>Attendees:</strong> 10 oncologists</li>\n</ul>"
+                        "component": "meeting_info_text",
+                        "content": "- **Event** Activeer® Nano Program: ADCs in the Treatment of HR+ mBC\n- **Location** Virtual - Central\n- **Date | Time** February 4 | 6:30 PM – 8:30 PM CT\n- **Moderator** Ruta Rao, MD\n- **Attendees** 10 oncologists"
                     },
                     [
                         {
-                            "component": "table",
+                            "component": "meeting_info_table",
                             "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocate Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |"
                         },
                         {
@@ -79,6 +79,24 @@
                             "Amivantamab SQ + lazertinib": 33.3,
                             "Osimertinib monotherapy": 22.2
                         }
+                    }
+                ]
+            },
+            {
+                "slide_type": "title_only",
+                "title": "ADC Safety and Tolerability in HR+/HER2- (HER2-low, HER2-ultralow, and IHC 0) mBC ​"
+            },
+            {
+                "slide_type": "content",
+                "title": "ADC Toxicities",
+                "body": [
+                    {
+                        "component": "table",
+                        "content": "<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse: collapse; width: 100%;\">\n  <thead>\n    <tr>\n      <th>ADC</th>\n      <th>Toxicities considered to be more of a concern compared to other ADCs used for mBC</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td><strong>T-DXd</strong></td>\n      <td>\n        <strong>ILD:</strong> may avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions<br>\n        <strong>Nausea/vomiting:</strong> managed with antiemetic prophylaxis<br>\n        <strong>Asthenia</strong>\n      </td>\n    </tr>\n    <tr>\n      <td><strong>Dato-DXd</strong></td>\n      <td>\n        <strong>Ocular toxicities</strong> (see next slide for more information on management)<br>\n        <strong>Mucositis/stomatitis:</strong> Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation\n      </td>\n    </tr>\n    <tr>\n      <td><strong>SG</strong></td>\n      <td>\n        <strong>Asthenia:</strong> managed with dose reductions<br>\n        <strong>Cytopenias, including neutropenia:</strong> managed with growth factors or dose reductions<br>\n        <strong>Diarrhea:</strong> managed with antidiarrheal regimens or dose reductions<br>\n        <strong>Alopecia:</strong> managed with dose reductions<br>\n        <strong>Weight loss</strong>\n      </td>\n    </tr>\n  </tbody>\n</table>"
+                    },
+                    {
+                        "component": "list",
+                        "content": "- The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored\n\n- Attendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea\n\n- The unique toxicities associated with Dato-DXd may pose initial treatment challenges for physicians due to lack of familiarity; however, these toxicities can be effectively managed with more experience\n  - According to one attendee, dry eye is generally more manageable than more severe ocular toxicities (eg, keratitis) observed with other cancer therapies\n  - Effective patient education on ocular toxicities and mucositis requires a multidisciplinary approach involving oncologists, nurses, and pharmacists\n  - Attendees recommended Dato-DXd starter kits with steroid mouthwash and eye drops or integrated EMR prescribing lists to support side effect prevention and management\n\n- SG tolerability is a challenge, commonly requiring dose reductions, lower starting doses, or alternate dosing schedules (Days 1 and 15 instead of Days 1 and 8)\n  - Side effects observed with SG align closely with traditional chemotherapy\n  - One attendee mentioned that oral chemotherapy is better tolerated than SG"
                     }
                 ]
             }

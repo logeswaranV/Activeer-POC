@@ -28,7 +28,7 @@ def render_map_image(highlight_states: list[str], width: int, height: int) -> By
         locationmode="USA-states",
         color="highlight",
         scope="usa",
-        color_continuous_scale=["#f2f2f2", "#D9544D"],
+        color_continuous_scale=["#d1d5d8", "#D9544D"],
         range_color=(0, 1),
     )
     fig.update_layout(
@@ -44,7 +44,7 @@ def render_map_image(highlight_states: list[str], width: int, height: int) -> By
             locationmode="USA-states",
             mode="text",
             text=US_STATE_ABBREVIATIONS,
-            textfont=dict(size=12, color="black"),
+            textfont=dict(size=10, color="black"),
             showlegend=False,
             hoverinfo="skip",
         )

@@ -45,6 +45,7 @@ def add_title(slide_object: "SlideObject", text: str) -> None:
     title_shape.fill_format.fill_type = FillType.NO_FILL
     title_frame = title_shape.text_frame
     title_frame.text = text
+    title_frame.text_frame_format.anchoring_type = slides.TextAnchorType.CENTER  # pyright: ignore[reportAttributeAccessIssue]
     paragraph = title_frame.paragraphs[0]
     paragraph.paragraph_format.alignment = slides.TextAlignment.LEFT  # pyright: ignore[reportAttributeAccessIssue]
     for portion in paragraph.portions:
@@ -57,6 +58,41 @@ def add_title(slide_object: "SlideObject", text: str) -> None:
 
     title_bottom_y = title_shape.y + title_shape.height
     slide_object.last_bottom_y = max(slide_object.last_bottom_y, title_bottom_y)
+    slide_object.chart_start_y = slide_object.last_bottom_y + 20
+
+
+def add_title_only(slide_object: "SlideObject", text: str) -> None:
+    """Render a large, centered title for title-only slides."""
+
+    slide = slide_object.aspose_object
+    width = slide_object.slide_width - 80
+    height = 160
+    x = 40
+    y = (slide_object.slide_height - height) / 3
+
+    shape = slide.shapes.add_auto_shape(
+        slides.ShapeType.RECTANGLE,
+        x,
+        y,
+        width,
+        height,
+    )
+    shape.fill_format.fill_type = FillType.NO_FILL
+    shape.line_format.fill_format.fill_type = FillType.NO_FILL
+
+    tf = shape.text_frame
+    tf.text = text
+    tf.text_frame_format.anchoring_type = slides.TextAnchorType.CENTER  # pyright: ignore[reportAttributeAccessIssue]
+    para = tf.paragraphs[0]
+    para.paragraph_format.alignment = slides.TextAlignment.LEFT  # pyright: ignore[reportAttributeAccessIssue]
+    for portion in para.portions:
+        pf = portion.portion_format
+        pf.font_height = 40
+        pf.font_bold = NullableBool.TRUE
+        pf.fill_format.fill_type = FillType.SOLID
+        pf.fill_format.solid_fill_color.color = Color.navy
+
+    slide_object.last_bottom_y = y + height
     slide_object.chart_start_y = slide_object.last_bottom_y + 20
 
 

@@ -7,15 +7,18 @@ from aspose.pydrawing import Color
 from aspose.slides import FillType
 from Components.utils import (
     add_title,
+    add_title_only,
     _remove_default_placeholders,
 )
 from Components.chart_tools import add_graph
 from Components.map_tools import render_map_image
-from Components.text_tools import render_text_content, render_html_into_shape
-from Components.table_tools import render_table
+from Components.text_tools import render_html_into_shape, render_meeting_info_markdown, render_list_into_shape
+from Components.table_tools import render_table, render_meeting_info_table
 
 CARD_PADDING = 12
 INCH_TO_PT = 72
+SHAPE_MAX_HEIGHT_IN = 7
+SHAPE_MAX_HEIGHT = SHAPE_MAX_HEIGHT_IN * INCH_TO_PT
 CARD_MAX_HEIGHT_IN = 5.2
 CARD_MAX_HEIGHT = CARD_MAX_HEIGHT_IN * INCH_TO_PT
 INPUT_JSON_PATH = Path('Input.json')
@@ -45,6 +48,7 @@ class SlideObject:
         column_gap: float = 60,
         row_gap: float = 50,
         total_charts: int = 0,
+        height_cap: float = CARD_MAX_HEIGHT,
     ):  # pyright: ignore[reportAttributeAccessIssue]
         self.aspose_object = aspose_object
         self.last_right_x = 0
@@ -60,6 +64,7 @@ class SlideObject:
         self.chart_start_y = 120
         self.current_column = 0
         self.current_row = 0
+        self.height_cap = height_cap
         self.chart_width = (
             (self.slide_width - self.left_margin * 2)
             - self.column_gap * (self.chart_columns - 1)
@@ -86,7 +91,7 @@ class SlideObject:
             - CARD_PADDING * 1  # reduced bottom margin
         )
         per_row = available_height / rows if available_height > 0 else 120
-        per_row = min(per_row, CARD_MAX_HEIGHT)
+        per_row = min(per_row, self.height_cap)
         return max(120, per_row)
 
 def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:  # pyright: ignore[reportAttributeAccessIssue]
@@ -103,8 +108,23 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
     if not slide_data:
         return
     for slide_payload in slide_data:
+        slide_type = slide_payload.get("slide_type")
         slide = presentation.slides.add_empty_slide(layout_slide)
         _remove_default_placeholders(slide)
+        if slide_type == "title_only":
+            slide_object = SlideObject(
+                slide,
+                slide_width,
+                slide_height,
+                chart_columns=1,
+                column_gap=0,
+                row_gap=0,
+                total_charts=1,
+                height_cap=SHAPE_MAX_HEIGHT,
+            )
+            add_title_only(slide_object, slide_payload.get("title", ""))
+            continue
+
         components = slide_payload.get("body") or []
         chart_only = _all_charts(components)
 
@@ -118,6 +138,7 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
                 column_gap=35,
                 row_gap=35,
                 total_charts=max(1, len(components)),
+                height_cap=CARD_MAX_HEIGHT,
             )
             slide_title = slide_payload.get("title", "")
             if slide_title:
@@ -180,6 +201,7 @@ def _render_manual_layout(
         column_gap=35,
         row_gap=35,
         total_charts=len(components),
+        height_cap=SHAPE_MAX_HEIGHT,
     )
     if title:
         add_title(slide_object, title)
@@ -249,6 +271,30 @@ def _render_component_in_slot(slide_object: SlideObject, component, x: float, y:
         frame.line_format.fill_format.fill_type = FillType.NO_FILL
     elif comp_type == "table":
         render_table(slide_object, component, x, y, width, height)
+    elif comp_type == "meeting_info_table":
+        render_meeting_info_table(slide_object, component, x, y, width, height)
+    elif comp_type == "list":
+        shape = slide_object.aspose_object.shapes.add_auto_shape(
+            slides.ShapeType.RECTANGLE,
+            x,
+            y,
+            width,
+            height,
+        )
+        shape.fill_format.fill_type = FillType.NO_FILL
+        shape.line_format.fill_format.fill_type = FillType.NO_FILL
+        render_list_into_shape(shape, component.get("content", []))
+    elif comp_type == "meeting_info_text":
+        shape = slide_object.aspose_object.shapes.add_auto_shape(
+            slides.ShapeType.RECTANGLE,
+            x,
+            y,
+            width,
+            height,
+        )
+        shape.fill_format.fill_type = FillType.NO_FILL
+        shape.line_format.fill_format.fill_type = FillType.NO_FILL
+        render_meeting_info_markdown(shape, component.get("content", ""))
     else:
         shape = slide_object.aspose_object.shapes.add_auto_shape(
             slides.ShapeType.RECTANGLE,
@@ -260,28 +306,6 @@ def _render_component_in_slot(slide_object: SlideObject, component, x: float, y:
         shape.fill_format.fill_type = FillType.NO_FILL
         shape.line_format.fill_format.fill_type = FillType.NO_FILL
         render_html_into_shape(shape, component.get("content", ""))
-def _render_map(slide_object: SlideObject, component: dict) -> None:
-    width = slide_object.chart_width
-    height = slide_object.get_chart_height()
-    x, y = slide_object.get_next_chart_position(height)
-
-    highlight_states = component.get("content", []) or []
-    map_bytes = render_map_image(
-        highlight_states,
-        width=int(width),
-        height=int(height),
-    )
-    image = slide_object.aspose_object.presentation.images.add_image(map_bytes)
-    frame = slide_object.aspose_object.shapes.add_picture_frame(
-        slides.ShapeType.RECTANGLE,
-        x,
-        y,
-        width,
-        height,
-        image,
-    )
-    frame.line_format.fill_format.fill_type = FillType.NO_FILL
-
 
 # Instantiate a Presentation object that represents a presentation file
 deck_definition = load_deck()
