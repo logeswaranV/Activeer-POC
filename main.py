@@ -5,11 +5,15 @@ from pathlib import Path
 import aspose.slides as slides
 from Components.utils import add_title, _remove_default_placeholders
 from Components.chart_tools import add_graph
+from Components.composite_tools import add_two_column_components
 
+# Layout constants for chart card sizing.
 CARD_PADDING = 12
 INCH_TO_PT = 72
 CARD_MAX_HEIGHT_IN = 5.2
 CARD_MAX_HEIGHT = CARD_MAX_HEIGHT_IN * INCH_TO_PT
+
+# Default deck definition file.
 INPUT_JSON_PATH = Path('Input.json')
 
 
@@ -52,12 +56,14 @@ class SlideObject:
         self.chart_start_y = 120
         self.current_column = 0
         self.current_row = 0
+        # Compute chart card width based on slide width and column spacing.
         self.chart_width = (
             (self.slide_width - self.left_margin * 2)
             - self.column_gap * (self.chart_columns - 1)
         ) / self.chart_columns
 
     def get_next_chart_position(self, chart_height: float) -> tuple[float, float]:
+        # Move to next row after the last column is filled.
         if self.current_column >= self.chart_columns:
             self.current_column = 0
             self.current_row += 1
@@ -71,6 +77,7 @@ class SlideObject:
         """Return a per-row height that keeps all charts within the slide."""
 
         rows = max(1, self.max_rows)
+        # Keep cards within the available slide height.
         available_height = (
             self.slide_height
             - self.chart_start_y
@@ -84,6 +91,7 @@ class SlideObject:
 def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:  # pyright: ignore[reportAttributeAccessIssue]
     """Build slides from the parsed deck JSON definition."""
 
+    # Configure widescreen slide size.
     presentation.slide_size.set_size(
         slides.SlideSizeType.WIDESCREEN, slides.SlideSizeScaleType.MAXIMIZE
     )
@@ -91,16 +99,21 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
     slide_width = presentation.slide_size.size.width
     slide_height = presentation.slide_size.size.height
 
-    slide_data = sorted(deck_payload.get("slides", []), key=lambda slide: slide.get("order", 0))
+    # Slides are already ordered in Input.json.
+    slide_data = deck_payload.get("slides", [])
     if not slide_data:
         return
     for slide_payload in slide_data:
+        # Create a blank slide and strip default placeholders.
         slide = presentation.slides.add_empty_slide(layout_slide)
         _remove_default_placeholders(slide)
         components = slide_payload.get("body") or []
-        chart_components = [
-            component for component in components if component.get("component") == "chart"
-        ]
+        chart_components = []
+        layout_components = []
+        if isinstance(components, list):
+            chart_components = [
+                component for component in components if isinstance(component, dict) and component.get("component") == "chart"
+            ]
 
         slide_object = SlideObject(
             slide,
@@ -116,15 +129,31 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
         if slide_title:
             add_title(slide_object, slide_title)
 
-        for component in chart_components:
-            add_graph(
-                slide_object,
-                component,
-                component.get("name", slide_title or "Chart"),
-            )
+        composite_candidate = components
+        is_composite = isinstance(composite_candidate, dict)
+        if isinstance(composite_candidate, list):
+            is_composite = any(
+                isinstance(item, dict) and (item.get("content_type") or item.get("type")) in {"table", "markdown"}
+                for item in composite_candidate
+            ) or any(isinstance(item, list) for item in composite_candidate)
+
+        # Composite slides are rendered from the nested body layout.
+        if is_composite:
+            add_two_column_components(slide_object, composite_candidate)
+        else:
+            # Fallback: render chart components.
+            for component in chart_components:
+                add_graph(
+                    slide_object,
+                    component,
+                    component.get("name", slide_title or "Chart"),
+                )
+
+            for component in layout_components:
+                pass
 
 
-# Instantiate a Presentation object that represents a presentation file
+# Instantiate a Presentation object that represents a presentation file.
 deck_definition = load_deck()
 with slides.Presentation() as presentation:  # pyright: ignore[reportAttributeAccessIssue]
     create_slide(presentation, deck_definition)

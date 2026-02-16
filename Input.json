@@ -1,74 +1,390 @@
 {
-    "deck": {
-        "metadata": {
-            "title": "ADC Clinical Insights Deck",
-            "version": "1.0",
-            "theme_key": "clinical_modern"
-        },
-        "slides": [
+  "deck": {
+    "metadata": {
+      "title": "ADC Clinical Insights Deck",
+      "version": "1.0",
+      "theme_key": "clinical_modern"
+    },
+    "slides": [
+      {
+        "slide_type": "composite",
+        "title": "ADC Toxicities",
+        "body": [
+          {
+            "content_type": "table",
+            "name": "Toxicities Table",
+            "table_type": "comparison_row_grouped",
+            "theme": "vertical_accent",
+            "headers": [
+              "",
+              "Toxicities considered to be more of a concern compared to other ADCs used for mBC"
+            ],
+            "rows": [
+              [
+                "T-DXd",
+                "**ILD**: May avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions\n**Nausea/vomiting**: managed with antiemetic prophylaxis\n**Asthenia**"
+              ],
+              [
+                "Dato-DXd",
+                "**Ocular toxicities** (*see next slide for more information on management*)\n**Mucositis/stomatitis**: Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation\n**Asthenia**: managed with dose reductions"
+              ],
+              [
+                "SG",
+                "**Asthenia**: managed with dose reductions\n**Cytopenias, including neutropenia**: managed with growth factors or dose reductions\n**Diarrhea**: managed with antidiarrheal agents"
+              ]
+            ]
+          },
+          {
+            "content_type": "markdown",
+            "content": "The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored.\n\n\nAttendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea.\n\n\nThe unique toxicities associated with Dato-DXd may pose initial treatment challenges for physicians due to lack of familiarity; however, these toxicities can be effectively managed with more experience.\n\n\n- According to one attendee, dry eye is generally more manageable than more severe ocular toxicities (eg, keratitis) observed with other cancer therapies\n\n- Effective patient education on ocular toxicities and mucositis requires a multidisciplinary approach involving oncologists, nurses, and pharmacists\n\n- Attendees recommended Dato-DXd starter kits with steroid mouthwash and eye drops or integrated EMR prescribing lists to support side effect prevention and management\n\n\nSG tolerability is a challenge, commonly requiring dose reductions, lower starting doses, or alternate dosing schedules (Days 1 and 15 instead of Days 1 and 8).\n\n\n- Side effects observed with SG align closely with traditional chemotherapy\n\n- One attendee mentioned that oral chemotherapy is better tolerated than SG"
+          }
+        ]
+      },
+      {
+        "slide_type": "content",
+        "title": "Attendee Demographics",
+        "body": [
+          {
+            "component": "chart",
+            "chartType": "horizontal_bar_chart",
+            "name": "Years Post-Residency Treating Patients With BC",
+            "bucket_label": "Years",
+            "count_label": "Physicians",
+            "aggregations": {
+              ">25": 20,
+              "21 to 25": 0,
+              "16 to 20": 30,
+              "11 to 15": 30,
+              "7 to 10": 10,
+              "4 to 6": 0,
+              "0 to 3": 10
+            }
+          },
+          {
+            "component": "chart",
+            "chartType": "horizontal_bar_chart",
+            "name": "Patient Location:",
+            "bucket_label": "Physicians",
+            "count_label": "Patients",
+            "aggregations": {
+              ">50": 20,
+              "31 to 50": 10,
+              "21 to 30": 30,
+              "11 to 20": 20,
+              "6 to 10": 40,
+              "1 to 5": 0
+            }
+          },
+          {
+            "component": "chart",
+            "chartType": "donut_chart",
+            "name": "How comfortable are you managing ocular toxicities?",
+            "aggregations": {
+              "Treat the patient": 20,
+              "Refer to an optometrist": 40,
+              "Refer to ophthalmologist": 40
+            }
+          }
+        ]
+      },
+      {
+        "slide_type": "composite",
+        "title": "Preferred Treatment by Patient Characteristics",
+        "body": [
+          {
+            "content_type": "table",
+            "name": "Preferred Treatment Table",
+            "table_type": "comparison_row_grouped",
+            "theme": "vertical_accent_2",
+            "headers": [
+              "",
+              "Preferred Treatment by Patient Characteristics"
+            ],
+            "rows": [
+              [
+                "T-DXd",
+                "- Preferred in most patients unless noted below"
+              ],
+              [
+                "Dato-DXd",
+                "- Patients who are not candidates for T-DXd and adherent to steroid mouthwash prophylaxis\n- Patients who prefer the toxicity profile of Dato-DXd over the other ADCs\n- Patients with preexisting lung disease or drug-induced ILD\n- Patients with bone-only metastases or less aggressive disease (QOL impact may be prioritized over response rate)"
+              ],
+              [
+                "SG",
+                "- [Before Dato-DXd data were presented] Patients who are not candidates for T-DXd\n- [After Dato-DXd data were presented] Patients who are not candidates for T-DXd and are not adherent to steroid mouthwash prophylaxis"
+              ]
+            ]
+          },
+          {
+            "content_type": "table",
+            "name": "Institution Listing",
+            "table_type": "data_listing",
+            "theme": "header_accent",
+            "headers": [
+              "Institution",
+              "# of Attendees"
+            ],
+            "rows": [
+              [
+                "Advocate Lutheran General Hospital",
+                "1"
+              ],
+              [
+                "Beloit Clinic",
+                "1"
+              ],
+              [
+                "Highlands Oncology Group | Fayetteville",
+                "1"
+              ],
+              [
+                "Illinois Cancer Specialists",
+                "1"
+              ],
+              [
+                "Mercy Clinic | Saint Louis",
+                "1"
+              ],
+              [
+                "Northwest Cancer Center | Crown Point",
+                "1"
+              ],
+              [
+                "Oakland University William Beaumont School of Medicine",
+                "1"
+              ],
+              [
+                "Sanford Roger Maris Cancer Center",
+                "1"
+              ],
+              [
+                "Texas Oncology | Amarillo",
+                "1"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "slide_type": "composite",
+        "title": "Three Tables (Left Full, Right Split)",
+        "body": [
+          {
+            "content_type": "table",
+            "name": "Left Full Table",
+            "table_type": "comparison_row_grouped",
+            "theme": "vertical_accent",
+            "headers": [
+              "",
+              "Left Column Full Table"
+            ],
+            "rows": [
+              [
+                "Label A",
+                "- Dummy point A1\n- Dummy point A2"
+              ],
+              [
+                "Label B",
+                "- Dummy point B1\n- Dummy point B2"
+              ],
+              [
+                "Label C",
+                "- Dummy point C1\n- Dummy point C2"
+              ]
+            ]
+          },
+          [
             {
-                "order": 2,
-                "slide_type": "content",
-                "title": "Attendee Demographics",
-                "body": [
-                    {
-                        "component": "table",
-                        "content": ""
-                    },
-                    {
-                        "component": "text",
-                        "content": " - The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored /n- Attendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea"
-                    }
+              "content_type": "table",
+              "name": "Right Top Table",
+              "table_type": "data_listing",
+              "theme": "header_accent",
+              "headers": [
+                "Institution",
+                "# of Attendees"
+              ],
+              "rows": [
+                [
+                  "Dummy Hospital A",
+                  "1"
+                ],
+                [
+                  "Dummy Clinic B",
+                  "2"
+                ],
+                [
+                  "Dummy Center C",
+                  "3"
                 ]
+              ]
             },
             {
-                "order": 1,
-                "slide_type": "content",
-                "title": "Attendee Demographics",
-                "body": [
-                    {
-                        "component": "chart",
-                        "chartType": "horizontal_bar_chart",
-                        "name": "Years Post-Residency Treating Patients With BC",
-                        "bucket_label": "Years",
-                        "count_label": "Physicians",
-                        "aggregations": {
-                            ">25": 20,
-                            "21 to 25": 0,
-                            "16 to 20": 30,
-                            "11 to 15": 30,
-                            "7 to 10": 10,
-                            "4 to 6": 0,
-                            "0 to 3": 10
-                        }
-                    },
-                    {
-                        "component": "chart",
-                        "chartType": "horizontal_bar_chart",
-                        "name": "Patient Location:",
-                        "bucket_label": "Physicians",
-                        "count_label": "Patients",
-                        "aggregations": {
-                            ">50": 20,
-                            "31 to 50": 10,
-                            "21 to 30": 30,
-                            "11 to 20": 20,
-                            "6 to 10": 40,
-                            "1 to 5": 0
-                        }
-                    },
-                    {
-                        "component": "chart",
-                        "chartType": "donut_chart",
-                        "name": "How comfortable are you managing ocular toxicities?",
-                        "aggregations": {
-                            "Treat the patient": 20,
-                            "Refer to an optometrist": 40,
-                            "Refer to ophthalmologist": 40
-                        }
-                    }
+              "content_type": "table",
+              "name": "Right Bottom Table",
+              "table_type": "comparison_row_grouped",
+              "theme": "vertical_accent_2",
+              "headers": [
+                "",
+                "Right Bottom Table"
+              ],
+              "rows": [
+                [
+                  "X",
+                  "- Dummy X1"
+                ],
+                [
+                  "Y",
+                  "- Dummy Y1"
+                ],
+                [
+                  "Z",
+                  "- Dummy Z1"
                 ]
+              ]
             }
+          ]
         ]
-    }
+      },
+      {
+        "slide_type": "composite",
+        "title": "Three Tables (Right Full, Left Split)",
+        "body": [
+          [
+            {
+              "content_type": "table",
+              "name": "Left Top Table",
+              "table_type": "data_listing",
+              "theme": "header_accent",
+              "headers": [
+                "Institution",
+                "# of Attendees"
+              ],
+              "rows": [
+                [
+                  "Dummy Hospital D",
+                  "1"
+                ],
+                [
+                  "Dummy Clinic E",
+                  "2"
+                ],
+                [
+                  "Dummy Center F",
+                  "3"
+                ]
+              ]
+            },
+            {
+              "content_type": "table",
+              "name": "Left Bottom Table",
+              "table_type": "comparison_row_grouped",
+              "theme": "vertical_accent",
+              "headers": [
+                "",
+                "Left Bottom Table"
+              ],
+              "rows": [
+                [
+                  "P",
+                  "- Dummy P1"
+                ],
+                [
+                  "Q",
+                  "- Dummy Q1"
+                ],
+                [
+                  "R",
+                  "- Dummy R1"
+                ]
+              ]
+            }
+          ],
+          {
+            "content_type": "table",
+            "name": "Right Full Table",
+            "table_type": "comparison_row_grouped",
+            "theme": "vertical_accent_2",
+            "headers": [
+              "",
+              "Right Column Full Table"
+            ],
+            "rows": [
+              [
+                "Label D",
+                "- Dummy point D1\n- Dummy point D2"
+              ],
+              [
+                "Label E",
+                "- Dummy point E1\n- Dummy point E2"
+              ],
+              [
+                "Label F",
+                "- Dummy point F1\n- Dummy point F2"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "slide_type": "composite",
+        "title": "Three Tables (Left Full, Right Split)",
+        "body": [
+          {
+            "content_type": "table",
+            "name": "Left Full Table",
+            "table_type": "comparison_row_grouped",
+            "theme": "vertical_accent",
+            "headers": [
+              "",
+              "Left Column Full Table"
+            ],
+            "rows": [
+              [
+                "Label A",
+                "- Dummy point A1\n- Dummy point A2"
+              ],
+              [
+                "Label B",
+                "- Dummy point B1\n- Dummy point B2"
+              ],
+              [
+                "Label C",
+                "- Dummy point C1\n- Dummy point C2"
+              ]
+            ]
+          },
+          [
+            {
+              "content_type": "table",
+              "name": "Right Top Table",
+              "table_type": "data_listing",
+              "theme": "header_accent",
+              "headers": [
+                "Institution",
+                "# of Attendees"
+              ],
+              "rows": [
+                [
+                  "Dummy Hospital A",
+                  "1"
+                ],
+                [
+                  "Dummy Clinic B",
+                  "2"
+                ],
+                [
+                  "Dummy Center C",
+                  "3"
+                ]
+              ]
+            },
+            {
+              "content_type": "markdown",
+              "content": "The TROPION-Breast01 safety data for Dato-DXd compared to traditional chemotherapy were notably favored.\n\n\nAttendees agreed that Dato-DXd had a lower potential for severe side effects observed with other ADCs, such as ILD and severe diarrhea.\n\n\nThe unique toxicities associated with Dato-DXd may pose initial treatment challenges for physicians due to lack of familiarity; however, these toxicities can be effectively managed with more experience.\n\n\n- According to one attendee, dry eye is generally more manageable than more severe ocular toxicities (eg, keratitis) observed with other cancer therapies"
+            }
+          ]
+        ]
+      }
+    ]
+  }
 }
