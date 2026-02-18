@@ -7,43 +7,82 @@
         },
         "slides": [
             {
-                "slide_type": "meeting_info",
-                "title": "MEETING INFORMATION",
+                "slide_type": "report_title",
+                "layout": "Report Title",
                 "body": [
                     {
-                        "component": "meeting_info_text",
-                        "content": "- **Event** Activeer® Nano Program: ADCs in the Treatment of HR+ mBC\n- **Location** Virtual - Central\n- **Date | Time** February 4 | 6:30 PM – 8:30 PM CT\n- **Moderator** Ruta Rao, MD\n- **Attendees** 10 oncologists"
+                        "selection_pane": "report_title_main",
+                        "component": "text",
+                        "content": "Antibody-Drug Conjugates in the Treatment of Metastatic HR+ BC"
                     },
-                    [
-                        {
-                            "component": "meeting_info_table",
-                            "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocate Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |",
-                            "styles": {
-                                "ratio": [
-                                    0.7,
-                                    0.3
-                                ]
-                            }
-                        },
-                        {
-                            "component": "map",
-                            "content": [
-                                "TX",
-                                "WI",
-                                "IL",
-                                "MO",
-                                "MI",
-                                "IN",
-                                "AR",
-                                "ND"
-                            ]
-                        }
-                    ]
+                    {
+                        "selection_pane": "report_title_subtitle",
+                        "component": "text",
+                        "content": "Virtual – Central | February 4, 2025"
+                    },
+                    {
+                        "selection_pane": "report_title_speaker",
+                        "component": "text",
+                        "content": "Ruta Rao, MD"
+                    },
+                    {
+                        "selection_pane": "report_title_section",
+                        "component": "text",
+                        "content": "Results Reportssss"
+                    },
+                    {
+                        "selection_pane": "report_title_bio",
+                        "component": "text",
+                        "content": "Professor, Department of Internal Medicine, Division of Hematology, Oncology and Cell Therapy, Rush Medical College\nDirector, Coleman Foundation Comprehensive Breast Cancer Clinic\nMedical Director, Rush University Cancer Center"
+                    }
+                ]
+            },
+            {
+                "slide_type": "meeting_info",
+                "title": "MEETING INFORMARION",
+                "layout": "Meeting Information",
+                "body": [
+                    {
+                    "selection_pane": "MI_Event_Value",
+                    "component": "text",
+                    "content": "Activeer® Nanooooo Program: ADCs in the Treatment of HR+ mBC"
+                    },
+                    {
+                    "selection_pane": "MI_Location_Value",
+                    "component": "text",
+                    "content": "Virtual – Centrallllll"
+                    },
+                    {
+                    "selection_pane": "MI_DateTime_Value",
+                    "component": "text",
+                    "content": "February 4 | 6:30 PM – 8:30 PM CT"
+                    },
+                    {
+                    "selection_pane": "MI_Moderator_Value",
+                    "component": "text",
+                    "content": "Ruta Rao, MD"
+                    },
+                    {
+                    "selection_pane": "MI_Attendees_Value",
+                    "component": "text",
+                    "content": "10 oncologists"
+                    },
+                    {
+                    "selection_pane": "MI_Attendee_Table",
+                    "component": "meeting_info_table",
+                    "content": "| Institution | # of Attendees |\n|-------------|----------------|\n| Advocateeeeee Lutheran General Hospital | 1 |\n| Beloit Clinic | 1 |\n| Highlands Oncology Group \\| Fayetteville | 1 |\n| Illinois Cancer Specialists | 1 |\n| Mercy Clinic \\| Saint Louis | 1 |\n| Northwest Cancer Center \\| Crown Point | 1 |\n| Oakland University William Beaumont School of Medicine | 1 |\n| Sanford Roger Maris Cancer Center | 1 |\n| Texas Oncology \\| Amarillo | 1 |\n| University of Texas Southwestern Medical Center \\| Dallas | 1 |"
+                    },
+                    {
+                    "selection_pane": "MI_Map",
+                    "component": "map",
+                    "content": ["TX", "WI", "IL", "MO", "MI", "IN", "AR", "ND"]
+                    }
                 ]
             },
             {
                 "slide_type": "content",
                 "title": "Attendee Demographics",
+                "layout": "Blank",
                 "body": [
                     {
                         "component": "chart",
@@ -90,15 +129,17 @@
             },
             {
                 "slide_type": "title_only",
-                "title": "ADC Safety and Tolerability in HR+/HER2- (HER2-low, HER2-ultralow, and IHC 0) mBC ​"
+                "title": "ADC Safety and Tolerability in HR+/HER2- (HER2-low, HER2-ultralow, and IHC 0) mBC ​",
+                "layout": "Title Only"
             },
             {
                 "slide_type": "content",
                 "title": "ADC Toxicities",
+                "layout": "Two Content",
                 "body": [
                     {
                         "component": "table",
-                        "content": "|  | Toxicities considered to be more of a concern compared to other ADCs used for mBC |\n|------|--------------------------------------------------------------------------------------------------------------------------------|\n| **T-DXd** | **ILD:** may avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions<br>**Nausea/vomiting:** managed with antiemetic prophylaxis<br>**Asthenia** |\n| **Dato-DXd** | **Ocular toxicities** (see next slide for more information on management)<br>**Mucositis/stomatitis:** Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation |\n| **SG** | **Asthenia:** managed with dose reductions<br>**Cytopenias, including neutropenia:** managed with growth factors or dose reductions<br>**Diarrhea:** managed with antidiarrheal regimens or dose reductions<br>**Alopecia:** managed with dose reductions<br>**Weight loss** |",
+                        "content": "|  | Toxicitiesssss considered to be more of a concern compared to other ADCs used for mBC |\n|------|--------------------------------------------------------------------------------------------------------------------------------|\n| **T-DXd** | **ILD:** may avoid in patients with preexisting lung conditions or previous pneumonitis, managed with dose reductions<br>**Nausea/vomiting:** managed with antiemetic prophylaxis<br>**Asthenia** |\n| **Dato-DXd** | **Ocular toxicities** (see next slide for more information on management)<br>**Mucositis/stomatitis:** Managed with oral steroid mouthwash qid but the ability to prevent/treat is directly dependent on patient compliance and motivation |\n| **SG** | **Asthenia:** managed with dose reductions<br>**Cytopenias, including neutropenia:** managed with growth factors or dose reductions<br>**Diarrhea:** managed with antidiarrheal regimens or dose reductions<br>**Alopecia:** managed with dose reductions<br>**Weight loss** |",
                         "styles": {
                             "ratio": [
                                 0.15,

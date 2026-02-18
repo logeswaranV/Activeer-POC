@@ -22,6 +22,7 @@ SHAPE_MAX_HEIGHT = SHAPE_MAX_HEIGHT_IN * INCH_TO_PT
 CARD_MAX_HEIGHT_IN = 5.2
 CARD_MAX_HEIGHT = CARD_MAX_HEIGHT_IN * INCH_TO_PT
 INPUT_JSON_PATH = Path('Input.json')
+SAMPLE_TEMPLATE = Path('/Users/SIVAKAMI/Documents/Decera_project/Activeer-POC/SAMPLE.pptx')
 
 
 def load_deck(path: Path = INPUT_JSON_PATH) -> dict:
@@ -94,62 +95,73 @@ class SlideObject:
         per_row = min(per_row, self.height_cap)
         return max(120, per_row)
 
-def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:  # pyright: ignore[reportAttributeAccessIssue]
-    """Build slides from the parsed deck JSON definition."""
-
-    presentation.slide_size.set_size(
-        slides.SlideSizeType.WIDESCREEN, slides.SlideSizeScaleType.MAXIMIZE
+def create_slide(presentation: slides.Presentation, deck_payload: dict, template_pres: slides.Presentation) -> None:  # pyright: ignore[reportAttributeAccessIssue]
+    slide_data = sorted(
+        deck_payload["slides"],
+        key=lambda s: s.get("order", 0)
     )
-    layout_slide = presentation.layout_slides[0]
+
     slide_width = presentation.slide_size.size.width
     slide_height = presentation.slide_size.size.height
 
-    slide_data = sorted(deck_payload.get("slides", []), key=lambda slide: slide.get("order", 0))
-    if not slide_data:
-        return
     for slide_payload in slide_data:
-        slide_type = slide_payload.get("slide_type")
-        slide = presentation.slides.add_empty_slide(layout_slide)
-        _remove_default_placeholders(slide)
-        if slide_type == "title_only":
-            slide_object = SlideObject(
+        slide_type = slide_payload["slide_type"]
+        layout_name = slide_payload["layout"]
+
+        # ─────────────────────────
+        # REPORT TITLE (clone once)
+        # ─────────────────────────
+        if slide_type == "report_title":
+            report_title_template = find_report_title_template(template_pres, "Report Title")
+
+            rename_selection_panes(report_title_template, "Report Title")
+            slide = presentation.slides.add_clone(report_title_template)
+
+            replace_content_by_selection_pane(
                 slide,
-                slide_width,
-                slide_height,
-                chart_columns=1,
-                column_gap=0,
-                row_gap=0,
-                total_charts=1,
-                height_cap=SHAPE_MAX_HEIGHT,
+                slide_payload.get("body", [])
             )
-            add_title_only(slide_object, slide_payload.get("title", ""))
             continue
+
+        # ─────────────────────────
+        # MEETING INFORMARION (clone once)
+        # ─────────────────────────
+        if slide_type == "meeting_info":
+            report_title_template = find_report_title_template(template_pres, "Meeting Information")
+            rename_selection_panes(report_title_template, "Meeting Information")
+
+            slide = presentation.slides.add_clone(report_title_template)
+            replace_meeting_info_content(
+                slide,
+                slide_payload.get("body", [])
+            )
+            continue
+
+        # ─────────────────────────
+        # ALL OTHER SLIDES (empty)
+        # ─────────────────────────
+        layout = get_layout_by_name(presentation, layout_name)
+        slide = presentation.slides.add_empty_slide(layout)
+        _remove_default_placeholders(slide)
 
         components = slide_payload.get("body") or []
         chart_only = _all_charts(components)
 
         if chart_only:
-            column_count = max(1, len(components))
             slide_object = SlideObject(
                 slide,
                 slide_width,
                 slide_height,
-                chart_columns=column_count,
-                column_gap=35,
-                row_gap=35,
-                total_charts=max(1, len(components)),
+                chart_columns=len(components),
+                total_charts=len(components),
                 height_cap=CARD_MAX_HEIGHT,
             )
-            slide_title = slide_payload.get("title", "")
-            if slide_title:
-                add_title(slide_object, slide_title)
-            _add_layout_guides(slide_object, column_count)
+
+            if slide_payload.get("title"):
+                add_title(slide_object, slide_payload["title"])
+
             for component in components:
-                add_graph(
-                    slide_object,
-                    component,
-                    component.get("name", slide_title or "Chart"),
-                )
+                add_graph(slide_object, component, component.get("name"))
         else:
             _render_manual_layout(
                 presentation,
@@ -161,6 +173,11 @@ def create_slide(presentation: slides.Presentation, deck_payload: dict) -> None:
                 slide_payload.get("column_widths"),
             )
 
+def remove_shape_by_name(slide, shape_name: str):
+    for idx, shape in enumerate(slide.shapes):
+        if shape.name == shape_name:
+            slide.shapes.remove_at(idx)
+            return
 
 def _add_layout_guides(slide_object: SlideObject, columns: int) -> None:
     """Draw plain background guides that divide the available width into columns."""
@@ -331,8 +348,197 @@ def _render_component_in_slot(slide_object: SlideObject, component, x: float, y:
         shape.line_format.fill_format.fill_type = FillType.NO_FILL
         render_html_into_shape(shape, component.get("content", ""))
 
+# Content replacement for Title Slide template only
+def replace_content_by_selection_pane(slide, body):
+    """
+    Replace content on a slide using Selection Pane names
+    """
+    for item in body:
+        pane_name = item.get("selection_pane")
+        component = item.get("component")
+        content = item.get("content", "")
+
+        if not pane_name:
+            continue
+
+        shape = get_shape_by_name(slide, pane_name)
+        if not shape:
+            print(f"⚠️ Shape '{pane_name}' not found in slide")
+            continue
+
+        if component == "text":
+            if not shape.text_frame:
+                continue
+
+            tf = shape.text_frame
+            tf.text = ""  # clear sample content only
+            tf.paragraphs[0].text = content
+
+def replace_meeting_info_content(slide, body):
+    for item in body:
+        pane = item.get("selection_pane")
+        component = item.get("component")
+        content = item.get("content")
+
+        if not pane:
+            continue
+
+        shape = get_shape_by_name(slide, pane)
+
+        # ─────────────────────────────
+        # TABLE → REMOVE TEMPLATE TABLE
+        # ─────────────────────────────
+        if component == "meeting_info_table":
+            if shape:
+                x, y, w, h = shape.x, shape.y, shape.width, shape.height
+                remove_shape_by_name(slide, pane)
+
+                render_meeting_info_table(
+                    slide_object=SlideObject(
+                        slide,
+                        slide.presentation.slide_size.size.width,
+                        slide.presentation.slide_size.size.height,
+                    ),
+                    component=item,
+                    x=x,
+                    y=y,
+                    width=w,
+                    height=h,
+                )
+            continue
+
+        # ─────────────────────────────
+        # MAP → REMOVE TEMPLATE SHAPE
+        # ─────────────────────────────
+        if component == "map":
+            if shape:
+                x, y, w, h = shape.x, shape.y, shape.width, shape.height
+                remove_shape_by_name(slide, pane)
+
+                map_bytes = render_map_image(content, int(w), int(h))
+                image = slide.presentation.images.add_image(map_bytes)
+                slide.shapes.add_picture_frame(
+                    slides.ShapeType.RECTANGLE,
+                    x, y, w, h,
+                    image,
+                )
+            continue
+
+        # ─────────────────────────────
+        # TEXT → NORMAL REPLACEMENT
+        # ─────────────────────────────
+        if component == "text" and shape and shape.text_frame:
+            shape.text_frame.text = ""
+            shape.text_frame.paragraphs[0].text = content
+
+
+#get shape name 
+def get_shape_by_name(slide, name: str):
+    """
+    Find a shape by Selection Pane name
+    """
+    for shape in slide.shapes:
+        if shape.name == name:
+            return shape
+    return None
+
+def create_empty_output_presentation(template_pres):
+    output = slides.Presentation()
+
+    # Copy slide size
+    output.slide_size.set_size(
+        template_pres.slide_size.size.width,
+        template_pres.slide_size.size.height,
+        slides.SlideSizeScaleType.DO_NOT_SCALE
+    )
+
+    # Remove default slide
+    while len(output.slides) > 0:
+        output.slides.remove_at(0)
+
+    # Clone masters (this brings layouts too)
+    for master in template_pres.masters:
+        output.masters.add_clone(master)
+
+    return output
+
+def find_report_title_template(template_pres, slide_name):
+    for slide in template_pres.slides:
+        print(slide.layout_slide.name, slide_name, 'slidename')
+        if slide.layout_slide and slide.layout_slide.name == slide_name:
+            return slide
+    raise ValueError("Report Title template slide not found")
+
+def get_layout_by_name(presentation, layout_name):
+    for master in presentation.masters:
+        for layout in master.layout_slides:
+            if layout.name == layout_name:
+                return layout
+    raise ValueError(f"Layout '{layout_name}' not found")
+
+def rename_selection_panes(slide, slide_layout_name: str):
+    """
+    Rename Selection Pane (shape.name) to stable semantic identifiers
+    for known template slides.
+    """
+
+    rename_map = {}
+
+    # ─────────────────────────────
+    # REPORT TITLE SLIDE
+    # ─────────────────────────────
+    if slide_layout_name == "Report Title":
+        rename_map = {
+            "Rectangle 7": "report_title_main",
+            "Text Placeholder 13": "report_title_subtitle",
+            "Rectangle 8": "report_title_speaker",
+            "TextBox 2": "report_title_section",
+            "Text Placeholder 74754": "report_title_bio",
+        }
+
+    # ─────────────────────────────
+    # MEETING INFORMATION SLIDE
+    # ─────────────────────────────
+    elif slide_layout_name == "Meeting Information":
+        rename_map = {
+            "Group 9": "MI_Map",
+            "Table 10": "MI_Attendee_Table",
+            "TextBox 39": "MI_Attendees_Value",
+            "TextBox 33": "MI_Moderator_Value",
+            "TextBox 25": "MI_DateTime_Value",
+            "TextBox 17": "MI_Location_Value",
+            "TextBox 7": "MI_Event_Value",
+        }
+
+    # ─────────────────────────────
+    # APPLY RENAMES
+    # ─────────────────────────────
+    if not rename_map:
+        return  # nothing to rename
+
+    for shape in slide.shapes:
+        old_name = shape.name
+        if old_name in rename_map:
+            shape.name = rename_map[old_name]
+            print(f"Renamed '{old_name}' → '{shape.name}'")
+
+
 # Instantiate a Presentation object that represents a presentation file
 deck_definition = load_deck()
-with slides.Presentation() as presentation:  # pyright: ignore[reportAttributeAccessIssue]
-    create_slide(presentation, deck_definition)
-    presentation.save("NewPresentation.pptx", slides.export.SaveFormat.PPTX)
+# with slides.Presentation() as presentation:  # pyright: ignore[reportAttributeAccessIssue]
+#     create_slide(presentation, deck_definition)
+#     presentation.save("NewPresentation.pptx", slides.export.SaveFormat.PPTX)
+
+template_pres = slides.Presentation(str(SAMPLE_TEMPLATE))
+presentation = create_empty_output_presentation(template_pres)
+
+create_slide(
+    presentation,
+    deck_definition,
+    template_pres,
+)
+
+presentation.save(
+    "NewPresentation.pptx",
+    slides.export.SaveFormat.PPTX
+)
