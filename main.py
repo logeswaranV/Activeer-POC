@@ -307,7 +307,12 @@ def _render_component_in_slot(slide_object: SlideObject, component, x: float, y:
         )
         shape.fill_format.fill_type = FillType.NO_FILL
         shape.line_format.fill_format.fill_type = FillType.NO_FILL
-        render_list_into_shape(shape, component.get("content", []))
+        render_list_into_shape(
+            shape,
+            None,
+            component.get("content", ""),
+            component.get("styles"),
+        )
     elif comp_type == "meeting_info_text":
         shape = slide_object.aspose_object.shapes.add_auto_shape(
             slides.ShapeType.RECTANGLE,

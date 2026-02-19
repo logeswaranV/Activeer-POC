@@ -71,7 +71,6 @@ def render_meeting_info_markdown(shape: slides.IShape, markdown: str) -> None:  
     # transparent base shape
     shape.fill_format.fill_type = FillType.NO_FILL
     shape.line_format.fill_format.fill_type = FillType.NO_FILL
-
     # layout per item as separate rectangles
     gap = 8
     x = shape.x
@@ -128,8 +127,45 @@ def render_meeting_info_markdown(shape: slides.IShape, markdown: str) -> None:  
 
         y += per_h + gap
 
-def render_list_into_shape(shape: slides.IShape, items, level: int = 0) -> None:  # pyright: ignore[reportAttributeAccessIssue]
+def _parse_markdown_list(md: str) -> list[tuple[int, str]]:
+    entries: list[tuple[int, str]] = []
+    for line in md.splitlines():
+        if not line.strip():
+            continue
+        match = re.match(r"^(\s*)-\s+(.*)", line)
+        if not match:
+            continue
+        indent = len(match.group(1))
+        level = indent // 2
+        entries.append((level, match.group(2).strip()))
+    return entries
+
+
+def _flatten_list_items(items, depth: int = 0) -> list[tuple[int, str]]:
+    flattened: list[tuple[int, str]] = []
+    if isinstance(items, str):
+        return [(depth, items)]
+    if not isinstance(items, list):
+        return [(depth, str(items))]
+
+    for item in items:
+        if isinstance(item, list):
+            flattened.extend(_flatten_list_items(item, min(depth + 1, 9)))
+        else:
+            flattened.extend(_flatten_list_items(item, depth))
+    return flattened
+
+
+def render_list_into_shape(
+    shape: slides.Shape,
+    items=None,
+    content_md: str | None = None,
+    styles: dict | None = None,
+) -> None:  # pyright: ignore[reportAttributeAccessIssue]
     """Render a (possibly nested) Python list as bullet points inside the shape."""
+    styles = styles or {}
+    font_size = styles.get("font_size") or styles.get("fontSize") or 16
+
     tf = shape.text_frame
     tf.text = ""
     tf.paragraphs.clear()
@@ -138,32 +174,31 @@ def render_list_into_shape(shape: slides.IShape, items, level: int = 0) -> None:
     tf.text_frame_format.margin_right = 10
     tf.text_frame_format.margin_top = 8
     tf.text_frame_format.margin_bottom = 8
-    tf.text_frame_format.anchoring_type = slides.TextAnchorType.TOP
+    tf.text_frame_format.anchoring_type = slides.TextAnchorType.CENTER
+    tf.text_frame_format.autofit_type = slides.TextAutofitType.SHAPE
 
-    def _add_item(item, lvl: int) -> None:
-        if isinstance(item, list):
-            for sub in item:
-                _add_item(sub, min(lvl + 1, 4))
-            return
-        text = str(item)
+    if content_md:
+        entries = _parse_markdown_list(content_md)
+    elif isinstance(items, list):
+        entries = _flatten_list_items(items)
+    elif items is not None:
+        entries = [(0, str(items))]
+    else:
+        entries = []
+
+    for depth, text in entries:
         para = slides.Paragraph()
         para.paragraph_format.alignment = slides.TextAlignment.LEFT
-        para.paragraph_format.depth = lvl
+        para.paragraph_format.depth = min(depth, 9)
         para.paragraph_format.bullet.type = slides.BulletType.SYMBOL
         para.paragraph_format.bullet.char = "\u2022"
         para.paragraph_format.bullet.color.color = Color.black
         para.portions.clear()
         portion = slides.Portion(text)
         pf = portion.portion_format
-        pf.font_height = 16 if lvl == 0 else 14
+        pf.font_height = font_size
         pf.font_bold = slides.NullableBool.FALSE
         pf.fill_format.fill_type = FillType.SOLID
         pf.fill_format.solid_fill_color.color = Color.black
         para.portions.add(portion)
         tf.paragraphs.add(para)
-
-    if isinstance(items, list):
-        for it in items:
-            _add_item(it, level)
-    else:
-        _add_item(items, level)
