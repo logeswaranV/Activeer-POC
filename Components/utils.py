@@ -1,7 +1,9 @@
-import aspose.slides as slides  # pyright: ignore[reportMissingModuleSource]
-from aspose.pydrawing import Color  # pyright: ignore[reportAttributeAccessIssue, reportMissingModuleSource]
-from aspose.slides import FillType, NullableBool  # pyright: ignore[reportAttributeAccessIssue, reportMissingModuleSource]
-from aspose.slides.util import SlideUtil  # pyright: ignore[reportMissingModuleSource]
+from pptx.util import Pt, Emu
+from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
+from pptx.oxml.ns import qn
+from pptx.enum.shapes import MSO_SHAPE
+import pptx.shapes.autoshape
 
 from typing import TYPE_CHECKING
 
@@ -9,100 +11,125 @@ if TYPE_CHECKING:
     from main import SlideObject
 
 
-def _find_existing_title_shape(slide: slides.ISlide) -> slides.IShape | None:  # pyright: ignore[reportAttributeAccessIssue]
-    for placeholder_type in (
-        slides.PlaceholderType.TITLE,
-        slides.PlaceholderType.CENTERED_TITLE,
-    ):
-        shapes = SlideUtil.find_shapes_by_placeholder_type(slide, placeholder_type)
-        if shapes:
-            return shapes[0]
+# ── Coordinate helper ──────────────────────────────────────────────────────────
+def pt(value: float) -> Emu:
+    """Convert points to EMU (python-pptx's native unit)."""
+    return Emu(int(value * 12700))
 
+
+# ── Color helper ───────────────────────────────────────────────────────────────
+def rgb(r: int, g: int, b: int) -> RGBColor:
+    return RGBColor(r, g, b)
+
+
+def to_hex(color: RGBColor) -> str:
+    """Convert RGBColor to a 6-character hex string (e.g. 'FF0000')."""
+    return "%02X%02X%02X" % (color[0], color[1], color[2])
+
+
+# ── Fill helpers ───────────────────────────────────────────────────────────────
+def set_no_fill(shape) -> None:
+    shape.fill.background()
+
+
+def set_solid_fill(shape, color: RGBColor) -> None:
+    shape.fill.solid()
+    shape.fill.fore_color.rgb = color
+
+
+def set_no_line(shape) -> None:
+    shape.line.fill.background()
+    # For some shapes, we need to explicitly set width to 0
+    try:
+        shape.line.width = 0
+    except:
+        pass
+
+
+# ── Title helpers ──────────────────────────────────────────────────────────────
+
+def _find_existing_title_shape(slide):
+    """Return the title placeholder on *slide*, or None."""
+    for ph in slide.placeholders:
+        if ph.placeholder_format.idx == 0:
+            return ph
     return None
 
 
-def _emphasize_title_text(title_frame: slides.TextFrame) -> None:  # pyright: ignore[reportAttributeAccessIssue]
-    if not title_frame.paragraphs:
+def _emphasize_title_text(tf) -> None:
+    if not tf.paragraphs:
         return
-
-    paragraph = title_frame.paragraphs[0]
-    paragraph.paragraph_format.default_portion_format.font_bold = NullableBool.TRUE
-    for portion in paragraph.portions:
-        portion.portion_format.font_bold = NullableBool.TRUE
+    for run in tf.paragraphs[0].runs:
+        run.font.bold = True
 
 
 def add_title(slide_object: "SlideObject", text: str) -> None:
     """Ensure the slide has a bold title shape with no fill."""
 
-    slide = slide_object.aspose_object
+    slide = slide_object.slide
     title_shape = _find_existing_title_shape(slide)
 
     if title_shape is None:
-        title_shape = slide.shapes.add_auto_shape(
-            slides.ShapeType.RECTANGLE, 40, 30, 640, 60  # pyright: ignore[reportAttributeAccessIssue]
+        from pptx.util import Emu
+        from pptx.enum.shapes import MSO_SHAPE
+        title_shape = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            Pt(40), Pt(30), Pt(640), Pt(60),
         )
 
-    title_shape.fill_format.fill_type = FillType.NO_FILL
-    title_frame = title_shape.text_frame
-    title_frame.text = text
-    title_frame.text_frame_format.anchoring_type = slides.TextAnchorType.CENTER  # pyright: ignore[reportAttributeAccessIssue]
-    paragraph = title_frame.paragraphs[0]
-    paragraph.paragraph_format.alignment = slides.TextAlignment.LEFT  # pyright: ignore[reportAttributeAccessIssue]
-    for portion in paragraph.portions:
-        portion.portion_format.font_height = 28
-        portion.portion_format.font_bold = NullableBool.TRUE
-        portion.portion_format.fill_format.fill_type = FillType.SOLID
-        portion.portion_format.fill_format.solid_fill_color.color = Color.from_argb(255, 33, 45, 106)
-    title_shape.line_format.fill_format.fill_type = FillType.NO_FILL
-    _emphasize_title_text(title_frame)
+    set_no_fill(title_shape)
+    tf = title_shape.text_frame
+    tf.word_wrap = True
+    tf.text = text
 
-    title_bottom_y = title_shape.y + title_shape.height
-    slide_object.last_bottom_y = max(slide_object.last_bottom_y, title_bottom_y)
+    para = tf.paragraphs[0]
+    para.alignment = PP_ALIGN.LEFT
+    for run in para.runs:
+        run.font.size = Pt(28)
+        run.font.bold = True
+        run.font.color.rgb = rgb(33, 45, 106)
+    set_no_line(title_shape)
+
+    title_bottom_y = title_shape.top + title_shape.height
+    title_bottom_pt = title_bottom_y / 12700
+    slide_object.last_bottom_y = max(slide_object.last_bottom_y, title_bottom_pt)
     slide_object.chart_start_y = slide_object.last_bottom_y + 20
 
 
-def add_title_only(slide_object: "SlideObject", text: str) -> None:
-    """Render a large, centered title for title-only slides."""
+def add_section_divider(slide_object: "SlideObject", text: str) -> None:
+    """Render a large, centered title for section divider slides."""
 
-    slide = slide_object.aspose_object
+    slide = slide_object.slide
     width = slide_object.slide_width - 80
     height = 160
     x = 40
     y = (slide_object.slide_height - height) / 3
 
-    shape = slide.shapes.add_auto_shape(
-        slides.ShapeType.RECTANGLE,
-        x,
-        y,
-        width,
-        height,
+    shape = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE,
+        Pt(x), Pt(y), Pt(width), Pt(height),
     )
-    shape.fill_format.fill_type = FillType.NO_FILL
-    shape.line_format.fill_format.fill_type = FillType.NO_FILL
+    set_no_fill(shape)
+    set_no_line(shape)
 
     tf = shape.text_frame
+    tf.word_wrap = True
     tf.text = text
-    tf.text_frame_format.anchoring_type = slides.TextAnchorType.CENTER  # pyright: ignore[reportAttributeAccessIssue]
     para = tf.paragraphs[0]
-    para.paragraph_format.alignment = slides.TextAlignment.LEFT  # pyright: ignore[reportAttributeAccessIssue]
-    for portion in para.portions:
-        pf = portion.portion_format
-        pf.font_height = 40
-        pf.font_bold = NullableBool.TRUE
-        pf.fill_format.fill_type = FillType.SOLID
-        pf.fill_format.solid_fill_color.color = Color.from_argb(255, 33, 45, 106)
+    para.alignment = PP_ALIGN.LEFT
+    for run in para.runs:
+        run.font.size = Pt(40)
+        run.font.bold = True
+        run.font.color.rgb = rgb(33, 45, 106)
 
     slide_object.last_bottom_y = y + height
     slide_object.chart_start_y = slide_object.last_bottom_y + 20
 
 
-def _remove_default_placeholders(slide: slides.ISlide) -> None:  # pyright: ignore[reportAttributeAccessIssue]
-    default_types = {
-        slides.PlaceholderType.BODY,
-        slides.PlaceholderType.SUBTITLE,
-        slides.PlaceholderType.CENTERED_TITLE,
-    }
-    for shape in list(slide.shapes):
-        placeholder = shape.placeholder
-        if placeholder and placeholder.type in default_types:
-            slide.shapes.remove(shape)
+def _remove_default_placeholders(slide) -> None:
+    """Remove all placeholders except the title (idx 0) from a fresh slide."""
+    sp_tree = slide.shapes._spTree
+    for ph in list(slide.placeholders):
+        if ph.placeholder_format.idx > 0:
+            sp = ph._element
+            sp_tree.remove(sp)

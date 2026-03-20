@@ -1,5 +1,4 @@
-aspose-slides
+python-pptx
 matplotlib
-plotly
 pandas
-kaleido
+lxml
